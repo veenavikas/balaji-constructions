@@ -1,6 +1,5 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/sections/Footer";
-import AmenitiesSection from "@/components/sections/Amenities";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -47,7 +46,6 @@ export default function AmenitiesPage() {
               </p>
             </div>
           </div>
-        </div>
       </section>
 
       <Footer />

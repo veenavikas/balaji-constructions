@@ -4,8 +4,21 @@ import { Metadata } from "next";
 import { MapPin, Maximize, Home, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
+interface Project {
+  name: string;
+  category: string;
+  location: string;
+  config: string;
+  status: string;
+  image: string;
+  description: string;
+  price: string;
+  area: string;
+  amenities: string[];
+}
+
 // Mock data for project details (usually from CMS)
-const projectData: Record<string, any> = {
+const projectData: Record<string, Project> = {
   "the-obsidian": {
     name: "The Obsidian",
     category: "Residential",

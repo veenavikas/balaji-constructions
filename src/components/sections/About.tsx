@@ -80,8 +80,8 @@ export default function About() {
       });
       
       // Update active timeline dot
-      const dots = gsap.utils.toArray('.timeline-dot');
-      dots.forEach((dot: Element, index) => {
+      const dots = gsap.utils.toArray<HTMLElement>('.timeline-dot');
+      dots.forEach((dot, index) => {
         ScrollTrigger.create({
           trigger: containerRef.current,
           start: `${(index / storyChapters.length) * 100}% top`,

@@ -24,7 +24,8 @@ export const schemaTypes = [
       { name: 'project', title: 'Project', type: 'reference', to: [{ type: 'project' }] },
       { name: 'quote', title: 'Short Quote', type: 'string' },
       { name: 'fullText', title: 'Full Review', type: 'text' },
-      { name: 'rating', title: 'Rating', type: 'number', validation: Rule => Rule.min(1).max(5) },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      { name: 'rating', title: 'Rating', type: 'number', validation: (Rule: any) => Rule.min(1).max(5) },
       { name: 'avatar', title: 'Avatar', type: 'image', options: { hotspot: true } },
     ]
   },

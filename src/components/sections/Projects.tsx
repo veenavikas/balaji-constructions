@@ -101,7 +101,7 @@ export default function Projects() {
         });
 
         // Image Reveal Clip Path
-        gsap.utils.toArray(".project-card-image").forEach((img: any) => {
+        gsap.utils.toArray<HTMLElement>(".project-card-image").forEach((img) => {
           gsap.fromTo(img, 
             { clipPath: "inset(0% 100% 0% 0%)" },
             { 

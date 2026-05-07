@@ -1,10 +1,9 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ChevronDown, MapPin, Search } from "lucide-react";
+import { MapPin, Search } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
