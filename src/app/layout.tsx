@@ -1,24 +1,32 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display, Space_Grotesk } from "next/font/google";
+import { Cormorant_Garamond, Outfit, Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-
 import SmoothScrolling from "@/components/SmoothScrolling";
-import CustomCursor from "@/components/CustomCursor";
 
-const inter = Inter({
+const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-cormorant",
   display: "swap",
 });
 
-const playfair = Playfair_Display({
+const outfit = Outfit({
   subsets: ["latin"],
-  variable: "--font-playfair",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-outfit",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-inter",
   display: "swap",
 });
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-space",
   display: "swap",
 });
@@ -35,12 +43,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="lenis lenis-smooth">
       <body
-        className={`${inter.variable} ${playfair.variable} ${spaceGrotesk.variable} antialiased noise-bg`}
+        className={`${cormorant.variable} ${outfit.variable} ${inter.variable} ${spaceGrotesk.variable} antialiased font-sans`}
       >
         <SmoothScrolling>
-          <CustomCursor />
           {children}
         </SmoothScrolling>
       </body>

@@ -1,174 +1,162 @@
 "use client";
 
-import { useState } from "react";
+import React, { useRef } from "react";
+import Image from "next/image";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 
-import { Star, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 const testimonials = [
   {
     id: 1,
-    name: "Rajesh & Priya Reddy",
-    project: "The Obsidian",
-    quote: "Living in a Balaji property is an experience in itself. The attention to detail is unmatched.",
-    fullText: "From the moment we booked our apartment at The Obsidian, the journey has been flawless. The team accommodated our customization requests with ease. The final delivery exceeded our expectations—every corner speaks of luxury and thoughtful design. Truly the best real estate decision we've made.",
-    rating: 5,
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150&h=150"
+    quote: "Moving to Balaji Seaview Tower was the best decision we made. The attention to detail and the ocean views are simply spectacular.",
+    name: "Dr. Ananya Reddy",
+    project: "BALAJI SEAVIEW TOWER",
+    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop",
   },
   {
     id: 2,
-    name: "Dr. Vikram Sharma",
-    project: "Aura Villas",
-    quote: "The vastu compliance combined with modern aesthetics is exactly what our family was looking for.",
-    fullText: "Finding a home that perfectly balances traditional vastu principles with ultra-modern luxury was a challenge until we found Aura Villas. The serene environment, top-notch amenities, and the sheer build quality make coming home the best part of my day.",
-    rating: 5,
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=150&h=150"
+    quote: "What impressed me most was the timely delivery. They promised hand-over in 24 months, and they delivered in 22. Highly professional.",
+    name: "Vikram Sharma",
+    project: "THE RESERVE VILLAS",
+    avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=200&auto=format&fit=crop",
   },
   {
     id: 3,
-    name: "Sneha Desai",
-    project: "Serenity Heights",
-    quote: "They delivered the project 2 months before the promised date. Incredible professionalism.",
-    fullText: "In an industry where delays are the norm, Balaji Constructions stands out. Not only did they deliver ahead of schedule, but the quality was also pristine. The handover process was smooth, and the after-sales support has been prompt and helpful.",
-    rating: 5,
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=150&h=150"
+    quote: "The clubhouse amenities are world-class. It feels like living in a luxury resort. My kids absolutely love the infinity pool.",
+    name: "Priya & Rahul Verma",
+    project: "AURA RESIDENCES",
+    avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=200&auto=format&fit=crop",
   },
   {
     id: 4,
-    name: "Anand Rao",
-    project: "Apex Tower",
-    quote: "Our corporate office at Apex Tower has elevated our brand image tremendously.",
-    fullText: "The commercial spaces built by Balaji are a testament to their visionary approach. The design maximizes natural light, and the smart building features have optimized our operational costs. It's a prestigious address that our clients admire.",
-    rating: 5,
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=150&h=150"
-  },
-  {
-    id: 5,
-    name: "Kavitha Menon",
-    project: "The Obsidian",
-    quote: "A true sanctuary in the heart of the city. The amenities are world-class.",
-    fullText: "I never thought I could find such peace within the bustling city of Visakhapatnam. The clubhouse, the infinity pool, and the lush green walking tracks make it feel like a perpetual resort vacation.",
-    rating: 5,
-    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=150&h=150"
+    quote: "As an investor, Balaji's commercial spaces have always yielded great returns. Their build quality is unparalleled in Vizag.",
+    name: "Suresh Narayanan",
+    project: "BALAJI BUSINESS PARK",
+    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop",
   }
 ];
 
 export default function Testimonials() {
-  const [selectedTestimonial, setSelectedTestimonial] = useState<typeof testimonials[0] | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  const [emblaRef, emblaApi] = useEmblaCarousel({ 
+    loop: true, 
+    align: "start",
+    slidesToScroll: 1,
+  }, [Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true })]);
 
-  // Duplicate for marquee effect
-  const marquee1 = [...testimonials, ...testimonials];
-  const marquee2 = [...testimonials].reverse();
-  const marquee2Double = [...marquee2, ...marquee2];
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+
+  React.useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap());
+    emblaApi.on("select", onSelect);
+    onSelect();
+  }, [emblaApi]);
+
+  useGSAP(() => {
+    gsap.from(".testimonial-header", {
+      opacity: 0,
+      y: 30,
+      duration: 0.8,
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top 80%",
+      }
+    });
+
+    gsap.from(".testimonial-card", {
+      opacity: 0,
+      y: 30,
+      duration: 0.6,
+      stagger: 0.15,
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top 75%",
+      }
+    });
+  }, { scope: containerRef });
 
   return (
-    <section className="bg-[#F5F0E8] py-24 overflow-hidden relative">
-      <div className="container mx-auto px-4 mb-16 text-center">
-        <h2 className="text-4xl md:text-5xl font-serif italic text-[#1A1A1A]">What Our Families Say</h2>
-        <div className="w-24 h-1 bg-primary mx-auto mt-6"></div>
-      </div>
-
-      <div className="relative flex flex-col gap-8 -mx-4 md:-mx-0">
-        {/* Row 1 - Left to Right */}
-        <div className="flex w-[200%] animate-marquee">
-          {marquee1.map((item, idx) => (
-            <div 
-              key={`row1-${idx}`} 
-              className="w-[300px] md:w-[400px] flex-shrink-0 px-4 cursor-pointer"
-              onClick={() => setSelectedTestimonial(item)}
-            >
-              <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 h-full flex flex-col">
-                <div className="flex text-primary mb-4">
-                  {[...Array(item.rating)].map((_, i) => (
-                    <Star key={i} size={16} fill="currentColor" />
-                  ))}
-                </div>
-                <p className="text-[#4A4A4A] font-light text-lg mb-6 flex-grow italic">&quot;{item.quote}&quot;</p>
-                <div className="flex items-center gap-4 mt-auto pt-4 border-t border-gray-100">
-                  <img src={item.avatar} alt={item.name} className="w-12 h-12 rounded-full object-cover" />
-                  <div>
-                    <h4 className="font-serif text-[#1A1A1A] font-medium">{item.name}</h4>
-                    <span className="text-xs text-gray-500 font-display uppercase tracking-wider">{item.project}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+    <section ref={containerRef} id="testimonials" className="py-24 bg-warm-white overflow-hidden">
+      <div className="container mx-auto px-4 md:px-8">
+        
+        <div className="testimonial-header mb-16 text-center">
+          <h2 className="font-display text-[42px] md:text-[56px] text-ink leading-none">
+            Families Who Call It Home
+          </h2>
         </div>
 
-        {/* Row 2 - Right to Left */}
-        <div className="flex w-[200%] animate-marquee" style={{ animationDirection: "reverse" }}>
-          {marquee2Double.map((item, idx) => (
-            <div 
-              key={`row2-${idx}`} 
-              className="w-[300px] md:w-[400px] flex-shrink-0 px-4 cursor-pointer"
-              onClick={() => setSelectedTestimonial(item)}
-            >
-              <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 h-full flex flex-col">
-                <div className="flex text-primary mb-4">
-                  {[...Array(item.rating)].map((_, i) => (
-                    <Star key={i} size={16} fill="currentColor" />
-                  ))}
-                </div>
-                <p className="text-[#4A4A4A] font-light text-lg mb-6 flex-grow italic">&quot;{item.quote}&quot;</p>
-                <div className="flex items-center gap-4 mt-auto pt-4 border-t border-gray-100">
-                  <img src={item.avatar} alt={item.name} className="w-12 h-12 rounded-full object-cover" />
-                  <div>
-                    <h4 className="font-serif text-[#1A1A1A] font-medium">{item.name}</h4>
-                    <span className="text-xs text-gray-500 font-display uppercase tracking-wider">{item.project}</span>
+        <div className="carousel-wrapper relative">
+          <div className="overflow-hidden" ref={emblaRef}>
+            <div className="flex -ml-4 md:-ml-6 py-4">
+              {testimonials.map((test, index) => {
+                // Approximate visibility logic for align="start" and 3 visible slides
+                const isActive = index >= selectedIndex && index <= selectedIndex + 2;
+                return (
+                <div key={test.id} className="testimonial-card flex-[0_0_100%] md:flex-[0_0_50%] lg:flex-[0_0_33.333%] pl-4 md:pl-6">
+                  <div className={`bg-cream border rounded-[20px] p-8 h-full flex flex-col relative transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_60px_rgba(184,134,11,0.08)] ${isActive ? 'opacity-100 border-gold/30' : 'opacity-50 border-border scale-[0.98]'}`}>
+                    {/* Quote Mark */}
+                    <div className="absolute top-4 left-6 font-display text-[80px] text-gold opacity-20 leading-none">
+                      &quot;
+                    </div>
+                    
+                    {/* Stars */}
+                    <div className="flex gap-1 mb-6 relative z-10">
+                      {[1,2,3,4,5].map(star => (
+                        <svg key={star} className="w-4 h-4 text-gold" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      ))}
+                    </div>
+                    
+                    {/* Quote */}
+                    <p className="font-display italic text-[20px] text-ink leading-relaxed mb-8 flex-grow relative z-10">
+                      &quot;{test.quote}&quot;
+                    </p>
+                    
+                    {/* Author */}
+                    <div className="flex items-center gap-4 mt-auto">
+                      <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gold relative shrink-0">
+                        <Image src={test.avatar} alt={test.name} fill className="object-cover" />
+                      </div>
+                      <div>
+                        <h4 className="font-heading font-semibold text-ink">{test.name}</h4>
+                        <p className="font-mono text-[11px] tracking-widest uppercase text-ink-muted mt-1">{test.project}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+              )})}
 
-      {/* Modal */}
-      <AnimatePresence>
-        {selectedTestimonial && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-            onClick={() => setSelectedTestimonial(null)}
-          >
-            <motion.div 
-              initial={{ scale: 0.95, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.95, y: 20 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl p-8 md:p-12 max-w-2xl w-full relative shadow-2xl"
+            </div>
+          </div>
+          
+          {/* Controls */}
+          <div className="flex items-center justify-center gap-4 mt-10">
+            <button 
+              onClick={() => emblaApi?.scrollPrev()}
+              className="w-12 h-12 rounded-full border border-border flex items-center justify-center text-ink-light hover:text-gold hover:border-gold transition-colors"
             >
-              <button 
-                onClick={() => setSelectedTestimonial(null)}
-                className="absolute top-6 right-6 text-gray-400 hover:text-black transition-colors"
-              >
-                <X size={24} />
-              </button>
-              
-              <div className="flex text-primary mb-6">
-                {[...Array(selectedTestimonial.rating)].map((_, i) => (
-                  <Star key={i} size={20} fill="currentColor" />
-                ))}
-              </div>
-              
-              <p className="text-xl md:text-2xl text-[#1A1A1A] font-light leading-relaxed mb-8 italic">
-                &quot;{selectedTestimonial.fullText}&quot;
-              </p>
-              
-              <div className="flex items-center gap-6 pt-6 border-t border-gray-100">
-                <img src={selectedTestimonial.avatar} alt={selectedTestimonial.name} className="w-16 h-16 rounded-full object-cover shadow-sm" />
-                <div>
-                  <h4 className="font-serif text-xl text-[#1A1A1A] font-medium mb-1">{selectedTestimonial.name}</h4>
-                  <span className="text-sm text-gray-500 font-display uppercase tracking-wider">{selectedTestimonial.project}</span>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              ←
+            </button>
+            <button 
+              onClick={() => emblaApi?.scrollNext()}
+              className="w-12 h-12 rounded-full border border-border flex items-center justify-center text-ink-light hover:text-gold hover:border-gold transition-colors"
+            >
+              →
+            </button>
+          </div>
+        </div>
+
+      </div>
     </section>
   );
 }

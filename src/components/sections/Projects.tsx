@@ -1,242 +1,204 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
+import React, { useState, useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+import { Flip } from "gsap/dist/Flip";
+import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(ScrollTrigger);
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, Flip, useGSAP);
+}
 
 const projects = [
   {
     id: 1,
-    name: "The Obsidian",
-    slug: "the-obsidian",
+    title: "Balaji Seaview Tower",
+    location: "Beach Road, Vizag",
     category: "Residential",
-    location: "Madhurawada",
-    config: "4 BHK Ultra-Luxury",
-    status: "Ongoing",
-    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80",
+    bhk: "3 & 4 BHK Luxury",
+    price: "₹3.5 Cr Onwards",
+    status: "Ongoing", // amber
+    image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=1000&auto=format&fit=crop",
+    className: "md:col-span-2 md:row-span-2 h-[400px] md:h-[624px]",
   },
   {
     id: 2,
-    name: "Aura Villas",
-    slug: "aura-villas",
+    title: "The Reserve Villas",
+    location: "Madhurawada",
     category: "Villas",
-    location: "Rushikonda",
-    config: "5 BHK + Private Pool",
-    status: "Completed",
-    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80",
+    bhk: "4 & 5 BHK Villas",
+    price: "₹5.2 Cr Onwards",
+    status: "Ongoing",
+    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=1000&auto=format&fit=crop",
+    className: "md:col-span-1 md:row-span-1 h-[300px]",
   },
   {
     id: 3,
-    name: "Apex Tower",
-    slug: "apex-tower",
-    category: "Commercial",
+    title: "Balaji Business Park",
     location: "Siripuram",
-    config: "Premium Workspaces",
-    status: "Ongoing",
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80",
+    category: "Commercial",
+    bhk: "Premium Office Spaces",
+    price: "₹1.5 Cr Onwards",
+    status: "Completed", // sage
+    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop",
+    className: "md:col-span-1 md:row-span-1 h-[300px]",
   },
   {
     id: 4,
-    name: "Serenity Heights",
-    slug: "serenity-heights",
-    category: "Residential",
+    title: "Aura Residences",
     location: "MVP Colony",
-    config: "3 & 4 BHK Condos",
+    category: "Residential",
+    bhk: "3 BHK Premium",
+    price: "₹2.1 Cr Onwards",
     status: "Completed",
-    image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?q=80&w=1000&auto=format&fit=crop",
+    className: "md:col-span-1 md:row-span-1 h-[300px]",
   },
   {
     id: 5,
-    name: "Lumina Estate",
-    slug: "lumina-estate",
-    category: "Villas",
-    location: "Bheemili",
-    config: "Smart Villas",
-    status: "Upcoming",
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80",
-  }
+    title: "Balaji One",
+    location: "Seethammadhara",
+    category: "Residential",
+    bhk: "4 BHK Ultra Luxury",
+    price: "₹4.8 Cr Onwards",
+    status: "Upcoming", // copper
+    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1000&auto=format&fit=crop",
+    className: "md:col-span-2 md:row-span-1 h-[300px]",
+  },
 ];
 
-const categories = ["All", "Residential", "Commercial", "Villas", "Ongoing"];
+const filters = ["All", "Residential", "Villas", "Commercial", "Ongoing"];
 
 export default function Projects() {
+  const [activeFilter, setActiveFilter] = useState("All");
   const containerRef = useRef<HTMLDivElement>(null);
-  const scrollWrapperRef = useRef<HTMLDivElement>(null);
-  const [activeCategory, setActiveCategory] = useState("All");
+  const gridRef = useRef<HTMLDivElement>(null);
 
-  const filteredProjects = projects.filter(
-    (p) => activeCategory === "All" || p.category === activeCategory || (activeCategory === "Ongoing" && p.status === "Ongoing")
-  );
-
-  useEffect(() => {
-    if (!containerRef.current || !scrollWrapperRef.current) return;
-    
-    // We only want horizontal scroll on larger screens
-    const mm = gsap.matchMedia();
-
-    mm.add("(min-width: 1024px)", () => {
-      const scrollWidth = scrollWrapperRef.current!.scrollWidth;
-      const viewportWidth = window.innerWidth;
-      
-      const pinDistance = scrollWidth - viewportWidth + 400; // Extra padding
-
-      const ctx = gsap.context(() => {
-        // Horizontal Scroll
-        gsap.to(scrollWrapperRef.current, {
-          x: () => -(scrollWidth - viewportWidth + 100), // 100 is padding
-          ease: "none",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top top",
-            end: () => `+=${pinDistance}`,
-            pin: true,
-            scrub: 1,
-            invalidateOnRefresh: true,
-          }
-        });
-
-        // Image Reveal Clip Path
-        gsap.utils.toArray<HTMLElement>(".project-card-image").forEach((img) => {
-          gsap.fromTo(img, 
-            { clipPath: "inset(0% 100% 0% 0%)" },
-            { 
-              clipPath: "inset(0% 0% 0% 0%)", 
-              duration: 1.5, 
-              ease: "power4.out",
-              scrollTrigger: {
-                trigger: img,
-                start: "left right-=200",
-                containerAnimation: gsap.getById("mainScroll"), // Note: need to handle this differently in GSAP context
-              }
-            }
-          );
-        });
-      }, containerRef);
-
-      return () => ctx.revert();
+  useGSAP(() => {
+    gsap.from(".project-card", {
+      opacity: 0,
+      y: 50,
+      duration: 0.8,
+      stagger: 0.1,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top 70%",
+        once: true,
+      }
     });
-
-    return () => mm.revert();
-  }, [activeCategory]); // Re-run when category changes as items change
-
-  // Vanilla Tilt Effect for Cards
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
     
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    
-    const rotateX = ((y - centerY) / centerY) * -10;
-    const rotateY = ((x - centerX) / centerX) * 10;
+    // Heading line animation
+    ScrollTrigger.create({
+      trigger: ".heading-line-trigger",
+      start: "top 80%",
+      onEnter: () => document.querySelector('.projects-heading-line')?.classList.add('drawn'),
+      once: true
+    });
+  }, { scope: containerRef });
 
-    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-  };
+  const filteredProjects = projects.filter(p => {
+    if (activeFilter === "All") return true;
+    if (activeFilter === "Ongoing") return p.status === "Ongoing";
+    return p.category === activeFilter;
+  });
 
-  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
-    const card = e.currentTarget;
-    card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Ongoing": return "bg-[#D97706]";
+      case "Completed": return "bg-sage";
+      case "Upcoming": return "bg-copper";
+      default: return "bg-ink";
+    }
   };
 
   return (
-    <section id="projects" ref={containerRef} className="relative bg-background py-20 lg:py-0 overflow-hidden">
-      
-      {/* Header & Filters (Sticky in GSAP context) */}
-      <div className="lg:absolute lg:top-24 lg:left-0 w-full z-20 px-8 lg:px-24 mb-12 lg:mb-0 pointer-events-none">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 pointer-events-auto">
+    <section ref={containerRef} id="projects" className="py-24 bg-cream">
+      <div className="container mx-auto px-4 md:px-8 heading-line-trigger">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-8">
           <div>
-            <h2 className="text-4xl md:text-6xl font-serif text-foreground mb-4">Masterpieces</h2>
-            <p className="text-muted-foreground font-light max-w-md">
-              A curated selection of our finest architectural achievements, where every detail is a testament to luxury.
+            <p className="font-mono text-[11px] tracking-[0.25em] uppercase text-ink-muted mb-4">
+              OUR MASTERPIECES
             </p>
+            <h2 className="font-display text-[48px] md:text-[64px] text-ink leading-none">
+              Homes That Inspire
+            </h2>
+            <span className="projects-heading-line heading-line mt-4" />
           </div>
           
-          <div className="flex flex-wrap gap-2 md:gap-4">
-            {categories.map((cat) => (
+          <div className="flex flex-wrap gap-3">
+            {filters.map(filter => (
               <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border ${
-                  activeCategory === cat 
-                    ? "bg-primary text-primary-foreground border-primary" 
-                    : "bg-transparent text-muted-foreground border-border hover:border-primary/50 hover:text-foreground"
+                key={filter}
+                onClick={() => setActiveFilter(filter)}
+                className={`px-6 py-2 rounded-full font-heading font-medium text-sm transition-all duration-300 ${
+                  activeFilter === filter 
+                    ? "neu-inset" 
+                    : "neu-raised text-ink-light hover:text-gold"
                 }`}
               >
-                {cat}
+                <span className={activeFilter === filter ? "text-gradient-gold" : ""}>{filter}</span>
               </button>
             ))}
           </div>
         </div>
-      </div>
 
-      {/* Horizontal Scroll Area */}
-      <div className="lg:h-screen flex items-center lg:pt-24 px-8 lg:px-24">
-        <div 
-          ref={scrollWrapperRef} 
-          className="flex flex-col lg:flex-row gap-8 lg:gap-12 w-full lg:w-auto"
-        >
-          {filteredProjects.map((project, idx) => (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: idx * 0.1 }}
-              className="relative w-full lg:w-[35vw] lg:min-w-[500px] aspect-[4/5] group overflow-hidden transition-transform duration-200 ease-out cursor-pointer"
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
-              style={{ transformStyle: 'preserve-3d' }}
-            >
-              {/* Image */}
-              <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-110 project-card-image">
-                <img 
-                  src={project.image} 
-                  alt={project.name}
-                  className="w-full h-full object-cover"
+        <motion.div ref={gridRef} layout className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-auto md:auto-rows-[300px]">
+          <AnimatePresence>
+            {filteredProjects.map((project) => (
+              <motion.div
+                key={project.id}
+                layout
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                className={`project-card relative rounded-[16px] overflow-hidden group ${project.className}`}
+                whileHover={{ y: -4, transition: { duration: 0.3 } }}
+              >
+                <Image
+                  src={project.image}
+                  alt={project.title}
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-              </div>
-
-              {/* Overlay Content */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent flex flex-col justify-end p-8 md:p-10 transform translate-z-[50px]">
+                <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_40%,rgba(28,25,23,0.8)_100%)] opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
                 
-                {/* Badges */}
-                <div className="flex gap-3 mb-6 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 delay-100">
-                  <span className="px-3 py-1 bg-white/10 backdrop-blur-md text-white text-xs font-medium uppercase tracking-wider border border-white/20">
-                    {project.location}
-                  </span>
-                  <span className={`px-3 py-1 text-white text-xs font-medium uppercase tracking-wider border ${
-                    project.status === "Completed" ? "bg-green-500/20 border-green-500/30 text-green-100" :
-                    project.status === "Ongoing" ? "bg-primary/20 border-primary/30 text-primary-foreground" :
-                    "bg-blue-500/20 border-blue-500/30 text-blue-100"
-                  }`}>
-                    {project.status}
-                  </span>
+                <div className="absolute bottom-0 left-0 w-full p-6 flex flex-col justify-end h-full">
+                  <div className="flex items-center gap-3 mb-2 mt-auto">
+                    <span className={`text-[10px] font-mono tracking-widest uppercase text-white px-2 py-1 rounded-full ${getStatusColor(project.status)}`}>
+                      {project.status}
+                    </span>
+                    <span className="text-white/80 font-sans text-sm">{project.location}</span>
+                  </div>
+                  
+                  <h3 className="font-heading text-2xl text-warm-white font-semibold mb-1">
+                    {project.title}
+                  </h3>
+                  
+                  <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-300 ease-out">
+                    <div className="overflow-hidden">
+                      <div className="flex items-center justify-between pt-4 mt-2 border-t border-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+                        <div>
+                          <p className="text-cream font-sans text-sm">{project.bhk}</p>
+                          <p className="text-gold font-heading font-medium mt-1">{project.price}</p>
+                        </div>
+                        <Link href="#" className="flex items-center text-gold font-heading font-medium text-sm hover:text-gold-light group/link">
+                          Explore 
+                          <span className="ml-2 transform group-hover/link:translate-x-1 transition-transform">→</span>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-
-                {/* Title & Info */}
-                <h3 className="text-4xl md:text-5xl font-serif text-white mb-2 translate-y-8 group-hover:translate-y-0 transition-transform duration-500">
-                  {project.name}
-                </h3>
-                
-                <p className="text-white/70 font-light text-lg mb-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                  {project.config}
-                </p>
-
-                {/* CTA */}
-                <Link href={`/projects/${project.slug}`} className="flex items-center gap-2 text-primary font-medium uppercase tracking-widest text-sm opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 delay-200 w-fit group/btn">
-                  Explore Project
-                  <span className="transform group-hover/btn:translate-x-2 transition-transform">→</span>
-                </Link>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </section>
   );

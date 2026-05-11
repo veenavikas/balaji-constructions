@@ -1,100 +1,56 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
-const config = {
-  darkMode: ["class"],
+const config: Config = {
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  prefix: "",
   theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
     extend: {
+      colors: {
+        cream: {
+          DEFAULT: "var(--cream)",
+          deep: "var(--cream-deep)",
+        },
+        warm: {
+          white: "var(--warm-white)",
+        },
+        ink: {
+          DEFAULT: "var(--ink)",
+          light: "var(--ink-light)",
+          muted: "var(--ink-muted)",
+        },
+        gold: {
+          DEFAULT: "var(--gold)",
+          light: "var(--gold-light)",
+          pale: "var(--gold-pale)",
+        },
+        copper: "var(--copper)",
+        sage: "var(--sage)",
+        border: "var(--border)",
+      },
       fontFamily: {
         sans: ["var(--font-inter)"],
-        serif: ["var(--font-playfair)"],
-        display: ["var(--font-space)"],
+        heading: ["var(--font-outfit)"],
+        display: ["var(--font-cormorant)"],
+        mono: ["var(--font-space)"],
       },
-      colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-          copper: "hsl(var(--accent-copper))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
-      },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
-      },
-      keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
-        marquee: {
-          "0%": { transform: "translateX(0%)" },
-          "100%": { transform: "translateX(-100%)" },
-        },
-        "ken-burns": {
-          "0%": { transform: "scale(1) translate(0, 0)" },
-          "100%": { transform: "scale(1.2) translate(-2%, -1%)" },
-        },
-      },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-        "marquee": "marquee 30s linear infinite",
-        "ken-burns": "ken-burns 40s ease infinite alternate",
+      boxShadow: {
+        "neu-raised": "var(--neu-raised)",
+        "neu-inset": "var(--neu-inset)",
+        "neu-float": "var(--neu-float)",
       },
       backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-cinematic': 'linear-gradient(135deg, #0A0A0A, #1C1C1E)',
-      }
+        "grad-gold": "var(--grad-gold)",
+        "grad-warm": "var(--grad-warm)",
+        "grad-card": "var(--grad-card)",
+        "grad-hero-img": "var(--grad-hero-img)",
+        "grad-section": "var(--grad-section)",
+        "grad-cta": "var(--grad-cta)",
+      },
     },
   },
-  plugins: [require("tailwindcss-animate")],
-} satisfies Config
-
-export default config
+  plugins: [],
+};
+export default config;

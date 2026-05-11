@@ -1,134 +1,164 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { MapPin, Search } from "lucide-react";
+import React, { useRef } from "react";
 import Link from "next/link";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger, useGSAP);
+}
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollY } = useScroll();
-  
-  // Parallax and cinematic transforms
-  const y1 = useTransform(scrollY, [0, 800], [0, 300]);
-  const opacity = useTransform(scrollY, [0, 400], [1, 0]);
-  const scale = useTransform(scrollY, [0, 800], [1.05, 1.2]);
-  const textY = useTransform(scrollY, [0, 400], [0, -50]);
+
+  useGSAP(() => {
+    // Label
+    gsap.from(".hero-label", {
+      opacity: 0,
+      y: 20,
+      duration: 0.8,
+      delay: 0.2,
+      ease: "power3.out"
+    });
+
+    // H1 Lines
+    gsap.from(".hero-h1-line-1", {
+      opacity: 0,
+      x: -50,
+      duration: 1.2,
+      delay: 0.4,
+      ease: "power3.out"
+    });
+    
+    gsap.from(".hero-h1-line-2", {
+      opacity: 0,
+      x: 50,
+      duration: 1.4,
+      delay: 0.5,
+      ease: "power3.out"
+    });
+
+    // Subtitle & CTAs
+    gsap.from(".hero-sub", {
+      opacity: 0,
+      y: 20,
+      duration: 0.8,
+      delay: 1.0,
+      ease: "power3.out"
+    });
+    
+    gsap.from(".hero-cta", {
+      opacity: 0,
+      y: 20,
+      duration: 0.8,
+      stagger: 0.1,
+      delay: 1.2,
+      ease: "power3.out"
+    });
+
+    // Trust Strip
+    gsap.from(".trust-strip", {
+      opacity: 0,
+      y: 20,
+      duration: 1,
+      delay: 1.5,
+      ease: "power3.out"
+    });
+
+    // Scroll-triggered Video Animation
+    gsap.to(".hero-video-wrapper", {
+      scale: 0.85,
+      borderRadius: "40px",
+      ease: "none",
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: 1,
+      }
+    });
+
+    // Text Parallax
+    gsap.to(".hero-content-wrapper", {
+      yPercent: -20,
+      ease: "none",
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: 1.5,
+      }
+    });
+
+  }, { scope: containerRef });
 
   return (
-    <section ref={containerRef} className="relative h-screen w-full flex items-center overflow-hidden bg-[#050505]">
-      
-      {/* Background Image with Cinematic Ken Burns & Parallax */}
-      <motion.div 
-        style={{ y: y1, scale }}
-        className="absolute inset-0 z-0"
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10" />
-        <img 
-          src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80" 
-          alt="Luxury Architecture" 
-          className="w-full h-full object-cover animate-ken-burns"
-        />
-      </motion.div>
-
-      {/* Main Content Area */}
-      <div className="relative z-20 container mx-auto px-6 md:px-12 flex flex-col items-start pt-20">
-        
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
-          style={{ opacity, y: textY }}
-          className="max-w-4xl"
+    <section ref={containerRef} className="relative w-full h-[120vh] min-h-[800px] overflow-hidden flex flex-col justify-end bg-ink">
+      {/* Background Video Wrapper */}
+      <div className="hero-video-wrapper absolute inset-0 z-0 overflow-hidden transform-gpu origin-top">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
         >
-          <div className="flex items-center gap-4 mb-6">
-            <motion.div 
-              initial={{ width: 0 }}
-              animate={{ width: "60px" }}
-              transition={{ duration: 1, delay: 0.5 }}
-              className="h-[1px] bg-primary"
-            />
-            <span className="text-primary font-display tracking-[0.4em] text-[10px] uppercase font-bold">The Pinnacle of Luxury</span>
-          </div>
+          <source src="/videos/268447.mp4" type="video/mp4" />
+        </video>
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.2)_0%,rgba(28,25,23,0.8)_100%)]" />
+      </div>
+
+      {/* Content */}
+      <div className="hero-content-wrapper container mx-auto px-4 md:px-8 relative z-10 pb-48 md:pb-56 pt-32">
+        <div className="max-w-4xl">
+          <p className="hero-label font-mono text-[11px] tracking-[0.3em] uppercase text-gold mb-6">
+            VISAKHAPATNAM&apos;S FINEST RESIDENCES
+          </p>
           
-          <h1 className="font-serif text-7xl md:text-8xl lg:text-[10rem] text-white leading-[0.85] mb-8">
-            Curated <br />
-            <span className="text-primary italic">Perfection</span>
+          <h1 className="font-display font-light text-[52px] md:text-[96px] leading-[1.1] text-warm-white mb-6">
+            <span className="block hero-h1-line-1">Built for the</span>
+            <span className="block hero-h1-line-2">Extraordinary.</span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-white/70 font-light tracking-wide max-w-xl mb-12 font-sans leading-relaxed">
-            Redefining the Visakhapatnam skyline through <br className="hidden md:block" />
-            visionary architecture and bespoke craftsmanship.
+          <p className="hero-sub font-sans text-lg text-cream max-w-[480px] mb-8 leading-relaxed">
+            Each Balaji home is a testament to four decades of craft, care, and coastal vision.
           </p>
-
-          <div className="flex flex-col sm:flex-row gap-8 items-center">
-            <Link
-              href="/projects"
-              className="group relative px-12 py-5 bg-primary text-primary-foreground font-bold uppercase tracking-[0.25em] text-[11px] transition-all duration-500 hover:shadow-[0_0_30px_rgba(201,168,76,0.3)]"
+          
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Link 
+              href="#projects" 
+              className="hero-cta inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-warm-white text-ink border border-gold font-heading font-medium transition-all duration-300 hover:text-warm-white relative overflow-hidden group"
             >
-              <span className="relative z-10">Explore Portfolio</span>
-              <div className="absolute inset-0 bg-white transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-in-out" />
+              <span className="absolute inset-0 w-full h-full bg-[linear-gradient(135deg,#B8860B,#D4A017)] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <span className="relative z-10">Explore Projects</span>
             </Link>
             
-            <Link
-              href="/contact"
-              className="group flex items-center gap-5 text-white/80 hover:text-primary transition-all duration-300"
-            >
-              <div className="w-14 h-14 rounded-full border border-white/10 flex items-center justify-center group-hover:border-primary group-hover:bg-primary/5 transition-all duration-500">
-                <Search size={18} className="group-hover:scale-110 transition-transform" />
-              </div>
-              <span className="uppercase tracking-[0.2em] text-[10px] font-bold">Request Private Tour</span>
-            </Link>
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Floating Glass Stats Bar */}
-      <motion.div
-        initial={{ opacity: 0, y: 100 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2, duration: 1 }}
-        className="absolute bottom-0 left-0 w-full glass z-30 py-8 border-t border-white/5"
-      >
-        <div className="container mx-auto px-12 grid grid-cols-2 md:grid-cols-4 gap-8">
-          <div className="space-y-1">
-            <span className="block text-primary font-serif text-3xl">22+</span>
-            <span className="text-white/40 uppercase tracking-[0.2em] text-[9px] font-bold">Years Experience</span>
-          </div>
-          <div className="space-y-1">
-            <span className="block text-primary font-serif text-3xl">17</span>
-            <span className="text-white/40 uppercase tracking-[0.2em] text-[9px] font-bold">Grand Projects</span>
-          </div>
-          <div className="space-y-1">
-            <span className="block text-primary font-serif text-3xl">4.5K+</span>
-            <span className="text-white/40 uppercase tracking-[0.2em] text-[9px] font-bold">Happy Residents</span>
-          </div>
-          <div className="space-y-1">
-            <span className="block text-primary font-serif text-3xl">0%</span>
-            <span className="text-white/40 uppercase tracking-[0.2em] text-[9px] font-bold">Compromise</span>
+            <button className="hero-cta inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-transparent text-warm-white border border-warm-white font-heading font-medium transition-all duration-300 hover:bg-white/15">
+              Watch Our Story
+            </button>
           </div>
         </div>
-      </motion.div>
-
-      {/* Side Decorative Element */}
-      <div className="absolute right-0 top-0 h-full w-24 border-l border-white/5 hidden lg:flex flex-col items-center justify-center gap-20 py-20 z-20">
-        <div className="h-px w-10 bg-primary/30 rotate-90" />
-        <span className="text-white/20 uppercase tracking-[0.5em] text-[9px] rotate-90 whitespace-nowrap font-bold">ESTABLISHED 2008</span>
-        <div className="h-px w-10 bg-primary/30 rotate-90" />
       </div>
 
-      {/* Location Badge */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2 }}
-        className="absolute bottom-28 left-6 md:left-12 flex items-center gap-3 text-white/40 text-[10px] uppercase tracking-[0.3em]"
-      >
-        <MapPin size={12} className="text-primary" />
-        Madhurawada, Visakhapatnam, India
-      </motion.div>
-
+      {/* Trust Strip */}
+      <div className="trust-strip absolute bottom-0 left-0 w-full bg-white/5 backdrop-blur-lg border-t border-white/10 z-20">
+        <div className="container mx-auto px-4 md:px-8 py-5">
+          <div className="flex flex-wrap items-center justify-between gap-4 font-sans text-sm text-warm-white font-medium opacity-90">
+            <div className="flex items-center gap-2">
+              <span className="text-gold">✓</span> RERA Registered
+            </div>
+            <div className="hidden sm:block w-px h-4 bg-white/20" />
+            <div>22+ Years</div>
+            <div className="hidden sm:block w-px h-4 bg-white/20" />
+            <div>ISO Certified</div>
+            <div className="hidden sm:block w-px h-4 bg-white/20" />
+            <div>2,000+ Families</div>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
-
